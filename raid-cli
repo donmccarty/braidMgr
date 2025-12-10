@@ -1,0 +1,8 @@
+#!/bin/bash
+# RAID Manager CLI wrapper
+# Run from project root directory
+
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+cd "$(dirname "$SCRIPT_DIR")"
+
+"$SCRIPT_DIR/.venv/bin/python" -m raid_manager.src.cli.commands "$@"
