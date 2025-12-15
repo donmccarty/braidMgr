@@ -29,7 +29,6 @@ class ClickableCard(QFrame):
 
     def mouseDoubleClickEvent(self, event):
         """Emit signal with item_num on double-click"""
-        print(f"DEBUG: ClickableCard mouseDoubleClickEvent fired for item {self.item_num}")
         self.double_clicked.emit(self.item_num)
         super().mouseDoubleClickEvent(event)
 
@@ -45,7 +44,6 @@ class ClickableNoteLabel(QLabel):
 
     def mouseDoubleClickEvent(self, event):
         """Forward double-click to signal, allowing parent to handle it"""
-        print("DEBUG: ClickableNoteLabel mouseDoubleClickEvent fired!")
         self.double_clicked.emit()
         # Don't call super() - we want to capture the double-click
         # and not have QLabel try to process it as text selection
