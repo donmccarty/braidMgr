@@ -35,7 +35,6 @@ from src.core.exports import Exporter
 def find_data_dir() -> Path:
     """Find the data directory"""
     candidates = [
-        Path('project_viewer/data'),
         Path('data'),
         Path('.')
     ]

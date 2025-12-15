@@ -176,8 +176,7 @@ class RAIDManagerApp(QMainWindow):
     def _find_and_load_data(self):
         """Find and load RAID and Budget data"""
         candidates = [
-            Path(__file__).parent.parent.parent.parent / 'project_viewer' / 'data',
-            Path.cwd() / 'project_viewer' / 'data',
+            Path(__file__).parent.parent.parent.parent / 'data',
             Path.cwd() / 'data',
             Path.cwd(),
         ]

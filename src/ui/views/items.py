@@ -46,6 +46,10 @@ class ItemsView(ctk.CTkFrame):
         self.search_var = ctk.StringVar()
         self.search_var.trace_add("write", lambda *args: self._apply_filters())
 
+        # Sort state
+        self.sort_column = "item_num"
+        self.sort_ascending = True
+
         self.grid_columnconfigure(0, weight=1)
         self.grid_rowconfigure(1, weight=1)
 
@@ -134,11 +138,38 @@ class ItemsView(ctk.CTkFrame):
         list_header.grid_propagate(False)
         list_header.grid_columnconfigure(2, weight=1)
 
-        ctk.CTkLabel(list_header, text="#", width=50, anchor="w", text_color=TEXT_SECONDARY, font=ctk.CTkFont(size=12, weight="bold")).grid(row=0, column=0, sticky="w")
-        ctk.CTkLabel(list_header, text="Title", anchor="w", text_color=TEXT_SECONDARY, font=ctk.CTkFont(size=12, weight="bold")).grid(row=0, column=2, sticky="w")
-        ctk.CTkLabel(list_header, text="Type", width=100, anchor="w", text_color=TEXT_SECONDARY, font=ctk.CTkFont(size=12, weight="bold")).grid(row=0, column=3, sticky="w", padx=(16, 0))
-        ctk.CTkLabel(list_header, text="Assignee", width=120, anchor="w", text_color=TEXT_SECONDARY, font=ctk.CTkFont(size=12, weight="bold")).grid(row=0, column=4, sticky="w", padx=(16, 0))
-        ctk.CTkLabel(list_header, text="Progress", width=70, anchor="e", text_color=TEXT_SECONDARY, font=ctk.CTkFont(size=12, weight="bold")).grid(row=0, column=5, sticky="e", padx=(16, 0))
+        # Sortable column headers
+        self.header_labels = {}
+
+        num_header = ctk.CTkLabel(list_header, text="# ▼", width=50, anchor="w", text_color=TEXT_SECONDARY, font=ctk.CTkFont(size=12, weight="bold"), cursor="hand2")
+        num_header.grid(row=0, column=0, sticky="w")
+        num_header.bind("<Button-1>", lambda e: self._toggle_sort("item_num"))
+        self.header_labels["item_num"] = num_header
+
+        title_header = ctk.CTkLabel(list_header, text="Title", anchor="w", text_color=TEXT_SECONDARY, font=ctk.CTkFont(size=12, weight="bold"), cursor="hand2")
+        title_header.grid(row=0, column=2, sticky="w")
+        title_header.bind("<Button-1>", lambda e: self._toggle_sort("title"))
+        self.header_labels["title"] = title_header
+
+        type_header = ctk.CTkLabel(list_header, text="Type", width=100, anchor="w", text_color=TEXT_SECONDARY, font=ctk.CTkFont(size=12, weight="bold"), cursor="hand2")
+        type_header.grid(row=0, column=3, sticky="w", padx=(16, 0))
+        type_header.bind("<Button-1>", lambda e: self._toggle_sort("type"))
+        self.header_labels["type"] = type_header
+
+        assignee_header = ctk.CTkLabel(list_header, text="Assignee", width=120, anchor="w", text_color=TEXT_SECONDARY, font=ctk.CTkFont(size=12, weight="bold"), cursor="hand2")
+        assignee_header.grid(row=0, column=4, sticky="w", padx=(16, 0))
+        assignee_header.bind("<Button-1>", lambda e: self._toggle_sort("assigned_to"))
+        self.header_labels["assigned_to"] = assignee_header
+
+        progress_header = ctk.CTkLabel(list_header, text="Progress", width=70, anchor="e", text_color=TEXT_SECONDARY, font=ctk.CTkFont(size=12, weight="bold"), cursor="hand2")
+        progress_header.grid(row=0, column=5, sticky="e", padx=(16, 0))
+        progress_header.bind("<Button-1>", lambda e: self._toggle_sort("percent_complete"))
+        self.header_labels["percent_complete"] = progress_header
+
+        updated_header = ctk.CTkLabel(list_header, text="Updated", width=80, anchor="e", text_color=TEXT_SECONDARY, font=ctk.CTkFont(size=12, weight="bold"), cursor="hand2")
+        updated_header.grid(row=0, column=6, sticky="e", padx=(16, 0))
+        updated_header.bind("<Button-1>", lambda e: self._toggle_sort("last_updated"))
+        self.header_labels["last_updated"] = updated_header
 
         # Separator
         sep = ctk.CTkFrame(list_card, height=1, fg_color=CARD_BORDER)
@@ -183,6 +214,9 @@ class ItemsView(ctk.CTkFrame):
                      search_val in (i.title or "").lower() or
                      search_val in (i.assigned_to or "").lower() or
                      search_val in str(i.item_num)]
+
+        # Apply sorting
+        items = self._sort_items(items)
 
         self.filtered_items = items
         self._render_items()
@@ -276,6 +310,18 @@ class ItemsView(ctk.CTkFrame):
         )
         assignee_label.pack(side="left", padx=(0, 16))
 
+        # Updated date (rightmost)
+        updated_str = self._format_date(item.last_updated)
+        updated_label = ctk.CTkLabel(
+            row_frame,
+            text=updated_str,
+            text_color=TEXT_SECONDARY,
+            font=ctk.CTkFont(size=12),
+            width=80,
+            anchor="e"
+        )
+        updated_label.pack(side="right", padx=(0, 16))
+
         # Progress
         progress = item.percent_complete or 0
         progress_color = "#28a745" if progress == 100 else TEXT_SECONDARY
@@ -288,6 +334,67 @@ class ItemsView(ctk.CTkFrame):
             anchor="e"
         )
         progress_label.pack(side="right", padx=(0, 16))
+
+    def _format_date(self, date_val) -> str:
+        """Format date for display as M/D/YY"""
+        if not date_val:
+            return "—"
+        try:
+            if hasattr(date_val, 'strftime'):
+                return date_val.strftime("%-m/%-d/%y")
+            # Handle string dates
+            from datetime import datetime
+            if isinstance(date_val, str):
+                d = datetime.fromisoformat(date_val.replace('Z', '+00:00'))
+                return d.strftime("%-m/%-d/%y")
+        except:
+            pass
+        return "—"
+
+    def _toggle_sort(self, column: str):
+        """Toggle sort on a column"""
+        if self.sort_column == column:
+            self.sort_ascending = not self.sort_ascending
+        else:
+            self.sort_column = column
+            self.sort_ascending = True
+
+        # Update header labels to show sort indicator
+        base_names = {
+            "item_num": "#",
+            "title": "Title",
+            "type": "Type",
+            "assigned_to": "Assignee",
+            "percent_complete": "Progress",
+            "last_updated": "Updated"
+        }
+        for col, label in self.header_labels.items():
+            base = base_names.get(col, col)
+            if col == self.sort_column:
+                arrow = "▲" if self.sort_ascending else "▼"
+                label.configure(text=f"{base} {arrow}")
+            else:
+                label.configure(text=base)
+
+        self._apply_filters()
+
+    def _sort_items(self, items: List[Item]) -> List[Item]:
+        """Sort items by current sort column"""
+        def get_sort_key(item):
+            val = getattr(item, self.sort_column, None)
+            if val is None:
+                # Sort nulls to the end
+                return (1, "")
+            if self.sort_column == "last_updated":
+                # Handle date sorting
+                if hasattr(val, 'isoformat'):
+                    return (0, val.isoformat())
+                return (0, str(val))
+            if self.sort_column == "percent_complete":
+                return (0, val or 0)
+            return (0, str(val).lower())
+
+        return sorted(items, key=get_sort_key, reverse=not self.sort_ascending)
 
     def refresh(self, project_data: Optional[ProjectData]):
         """Refresh with new data"""

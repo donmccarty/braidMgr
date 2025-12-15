@@ -143,7 +143,7 @@ class ItemsView(QWidget):
         primary_layout.addWidget(sort_label)
 
         self.sort_selector = QComboBox()
-        self.sort_selector.addItems(["Item #", "Title", "Start Date", "Finish Date", "Deadline", "% Complete", "Type"])
+        self.sort_selector.addItems(["Item #", "Title", "Start Date", "Finish Date", "Deadline", "% Complete", "Type", "Last Updated"])
         self.sort_selector.currentTextChanged.connect(self._apply_filters)
         primary_layout.addWidget(self.sort_selector)
 
@@ -299,7 +299,7 @@ class ItemsView(QWidget):
         """)
 
         # Columns
-        columns = ["#", "Type", "Title", "Assigned To", "Status", "Start", "Finish", "Deadline", "%"]
+        columns = ["#", "Type", "Title", "Assigned To", "Status", "Start", "Finish", "Deadline", "%", "Updated"]
         self.table.setColumnCount(len(columns))
         self.table.setHorizontalHeaderLabels(columns)
 
@@ -314,6 +314,7 @@ class ItemsView(QWidget):
         header.setSectionResizeMode(6, QHeaderView.ResizeToContents)  # Finish
         header.setSectionResizeMode(7, QHeaderView.ResizeToContents)  # Deadline
         header.setSectionResizeMode(8, QHeaderView.ResizeToContents)  # %
+        header.setSectionResizeMode(9, QHeaderView.ResizeToContents)  # Updated
 
         # Table settings
         self.table.setSelectionBehavior(QAbstractItemView.SelectRows)
@@ -429,6 +430,10 @@ class ItemsView(QWidget):
             return sorted(items, key=lambda x: -(x.percent_complete or 0))
         elif sort_key == "Type":
             return sorted(items, key=lambda x: (x.type or "Plan Item"))
+        elif sort_key == "Last Updated":
+            return sorted(items, key=lambda x: (
+                x.last_updated if x.last_updated and not isinstance(x.last_updated, str) else date.min
+            ), reverse=True)
         else:
             return items
 
@@ -532,6 +537,16 @@ class ItemsView(QWidget):
             pct_item.setTextAlignment(Qt.AlignCenter)
             pct_item.setForeground(text_color)
             self.table.setItem(row, 8, pct_item)
+
+            # Last Updated
+            if item.last_updated and not isinstance(item.last_updated, str):
+                updated_text = item.last_updated.strftime("%m/%d/%y")
+            else:
+                updated_text = "—"
+            updated_item = QTableWidgetItem(updated_text)
+            updated_item.setTextAlignment(Qt.AlignCenter)
+            updated_item.setForeground(text_color)
+            self.table.setItem(row, 9, updated_item)
 
     def refresh(self, project_data, budget):
         """Refresh with new data"""
