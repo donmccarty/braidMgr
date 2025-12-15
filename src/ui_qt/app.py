@@ -113,6 +113,7 @@ class RAIDManagerApp(QMainWindow):
             ("active", "🎯", "Active Items"),
             ("items", "📋", "All Items"),
             ("timeline", "📅", "Timeline"),
+            ("chronology", "📜", "Chronology"),
             ("budget", "💰", "Budget"),
         ]
 
@@ -268,6 +269,10 @@ class RAIDManagerApp(QMainWindow):
             elif view_id == "timeline":
                 from src.ui_qt.views.timeline import TimelineView
                 view = TimelineView(self.project_data)
+                view.item_clicked.connect(self._show_edit_dialog)
+            elif view_id == "chronology":
+                from src.ui_qt.views.chronology import ChronologyView
+                view = ChronologyView(self.project_data)
                 view.item_clicked.connect(self._show_edit_dialog)
             elif view_id == "budget":
                 from src.ui_qt.views.budget import BudgetView

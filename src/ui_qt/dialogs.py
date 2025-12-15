@@ -5,7 +5,7 @@ Modal dialog for viewing and editing RAID items.
 
 from PySide6.QtWidgets import (
     QDialog, QVBoxLayout, QHBoxLayout, QGridLayout,
-    QLabel, QLineEdit, QTextEdit, QComboBox, QSpinBox,
+    QLabel, QLineEdit, QTextEdit, QTextBrowser, QComboBox, QSpinBox,
     QDateEdit, QCheckBox, QPushButton, QFrame, QScrollArea,
     QWidget, QSizePolicy, QGraphicsDropShadowEffect
 )
@@ -16,6 +16,7 @@ from datetime import date
 
 from src.core.models import Item, ProjectMetadata
 from src.ui_qt.styles import TYPE_COLORS, INDICATOR_COLORS
+from src.ui_qt.views.chronology import urls_to_links
 
 
 class EditItemDialog(QDialog):
@@ -28,9 +29,16 @@ class EditItemDialog(QDialog):
         super().__init__(parent)
         self.item = item
         self.metadata = metadata
-        self.is_new = item.item_num == 0  # New item flag
+        self.is_new = item.item_num is None  # New item flag (None, not 0)
 
-        self.setWindowTitle(f"Edit Item #{item.item_num}" if not self.is_new else "New Item")
+        # Use item title in window title, fall back to item number
+        if self.is_new:
+            title = "New Item"
+        elif item.title:
+            title = f"#{item.item_num}: {item.title}"
+        else:
+            title = f"Edit Item #{item.item_num}"
+        self.setWindowTitle(title)
         self.setMinimumSize(700, 600)
         self.setMaximumSize(900, 800)
         self.setModal(True)
@@ -320,10 +328,23 @@ class EditItemDialog(QDialog):
         notes_section.setObjectName("section_header")
         content_layout.addWidget(notes_section)
 
-        self.notes_edit = QTextEdit()
-        self.notes_edit.setPlaceholderText("Enter notes (use > DATE - AUTHOR - TEXT format)...")
-        self.notes_edit.setMinimumHeight(100)
+        # Notes display with rich text for clickable links (read-only mode)
+        # and plain text edit (edit mode)
+        self.notes_edit = QTextBrowser()
+        self.notes_edit.setPlaceholderText("Enter notes (use > DATE - TEXT format)...")
+        self.notes_edit.setMinimumHeight(120)
+        self.notes_edit.setReadOnly(True)  # Read-only by default, shows formatted text
+        self.notes_edit.setOpenExternalLinks(True)  # QTextBrowser supports this
         content_layout.addWidget(self.notes_edit)
+
+        # Edit button to switch to edit mode
+        edit_notes_btn = QPushButton("Edit Notes")
+        edit_notes_btn.setObjectName("secondary_btn")
+        edit_notes_btn.setMaximumWidth(120)
+        edit_notes_btn.clicked.connect(self._toggle_notes_edit)
+        content_layout.addWidget(edit_notes_btn)
+        self.edit_notes_btn = edit_notes_btn
+        self._notes_edit_mode = False
 
         # === Metadata (display only) ===
         if self.item.created_date or self.item.last_updated:
@@ -434,8 +455,9 @@ class EditItemDialog(QDialog):
         if self.item.budget_amount:
             self.budget_spin.setValue(int(self.item.budget_amount))
 
-        # Notes
-        self.notes_edit.setPlainText(self.item.notes or "")
+        # Notes - store raw text and display formatted
+        self._raw_notes = self.item.notes or ""
+        self._show_formatted_notes()
 
         # Show budget field if type is Budget
         self._on_type_changed(self.item.type or "Plan Item")
@@ -456,6 +478,31 @@ class EditItemDialog(QDialog):
 
         # Show/hide budget field
         self.budget_frame.setVisible(type_text == "Budget")
+
+    def _show_formatted_notes(self):
+        """Show notes with clickable links (read-only mode)"""
+        if self._raw_notes:
+            notes_html = urls_to_links(self._raw_notes).replace('\n', '<br>')
+            self.notes_edit.setHtml(notes_html)
+        else:
+            self.notes_edit.setHtml("<i style='color: #999;'>No notes</i>")
+        self.notes_edit.setReadOnly(True)
+        self.edit_notes_btn.setText("Edit Notes")
+        self._notes_edit_mode = False
+
+    def _toggle_notes_edit(self):
+        """Toggle between view and edit mode for notes"""
+        if self._notes_edit_mode:
+            # Save and switch to view mode
+            self._raw_notes = self.notes_edit.toPlainText()
+            self._show_formatted_notes()
+        else:
+            # Switch to edit mode
+            self.notes_edit.setPlainText(self._raw_notes)
+            self.notes_edit.setReadOnly(False)
+            self.edit_notes_btn.setText("Done Editing")
+            self._notes_edit_mode = True
+            self.notes_edit.setFocus()
 
     def _save_item(self):
         """Save changes to the item"""
@@ -495,7 +542,10 @@ class EditItemDialog(QDialog):
         else:
             self.item.budget_amount = None
 
-        self.item.notes = self.notes_edit.toPlainText().strip() or None
+        # If in edit mode, get current text; otherwise use stored raw notes
+        if self._notes_edit_mode:
+            self._raw_notes = self.notes_edit.toPlainText()
+        self.item.notes = self._raw_notes.strip() or None
 
         # Update last_updated
         self.item.last_updated = date.today()
