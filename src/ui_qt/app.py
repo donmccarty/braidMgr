@@ -15,7 +15,7 @@ from PySide6.QtWidgets import (
     QMessageBox
 )
 from PySide6.QtCore import Qt, QSize
-from PySide6.QtGui import QFont, QColor, QIcon
+from PySide6.QtGui import QFont, QColor, QIcon, QAction
 
 # Add parent to path for imports
 sys.path.insert(0, str(Path(__file__).parent.parent.parent))
@@ -78,6 +78,9 @@ class RAIDManagerApp(QMainWindow):
         # Create content area
         self._create_content_area(main_layout)
 
+        # Create menu bar
+        self._create_menu_bar()
+
         # Load data
         self._find_and_load_data()
 
@@ -119,6 +122,7 @@ class RAIDManagerApp(QMainWindow):
             ("timeline", "📅", "Timeline"),
             ("chronology", "📜", "Chronology"),
             ("budget", "💰", "Budget"),
+            ("help", "❓", "Help"),
         ]
 
         for view_id, icon, text in nav_items:
@@ -216,6 +220,39 @@ class RAIDManagerApp(QMainWindow):
         self.views = {}
 
         parent_layout.addWidget(content, 1)
+
+    def _create_menu_bar(self):
+        """Create the application menu bar"""
+        menubar = self.menuBar()
+
+        # Help menu
+        help_menu = menubar.addMenu("Help")
+
+        # User Guide action
+        user_guide_action = QAction("User Guide", self)
+        user_guide_action.setShortcut("F1")
+        user_guide_action.triggered.connect(lambda: self.show_view("help"))
+        help_menu.addAction(user_guide_action)
+
+        help_menu.addSeparator()
+
+        # About action
+        about_action = QAction("About BRAID Manager", self)
+        about_action.triggered.connect(self._show_about)
+        help_menu.addAction(about_action)
+
+    def _show_about(self):
+        """Show about dialog"""
+        QMessageBox.about(
+            self,
+            "About BRAID Manager",
+            "<h2>BRAID Manager</h2>"
+            "<p>Version 1.0.0</p>"
+            "<p>Desktop application for managing BRAID logs:<br>"
+            "<b>B</b>udget, <b>R</b>isks, <b>A</b>ction Items, <b>I</b>ssues, <b>D</b>ecisions</p>"
+            "<p>Built with PySide6 (Qt for Python)</p>"
+            "<p>&copy; 2024 Centric Consulting</p>"
+        )
 
     def _find_and_load_data(self):
         """Find and load RAID and Budget data from platform-appropriate location"""
@@ -348,6 +385,9 @@ class RAIDManagerApp(QMainWindow):
             elif view_id == "budget":
                 from src.ui_qt.views.budget import BudgetView
                 view = BudgetView(self.calculated_budget)
+            elif view_id == "help":
+                from src.ui_qt.views.help import HelpView
+                view = HelpView()
             else:
                 view = QLabel(f"View: {view_id}")
 

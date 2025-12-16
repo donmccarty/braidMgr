@@ -50,10 +50,11 @@ class TimelineChart(QWidget):
         self.setMinimumHeight(max(400, min_height))
 
     def mouseMoveEvent(self, event):
-        """Show tooltip on hover"""
+        """Show tooltip on hover and update cursor"""
         y = event.pos().y()
         if y < self.header_height:
             self.setToolTip("")
+            self.setCursor(Qt.ArrowCursor)
             return
 
         row_index = (y - self.header_height) // self.row_height
@@ -61,11 +62,34 @@ class TimelineChart(QWidget):
             item = self.items[row_index]
             tooltip = self._build_tooltip(item)
             self.setToolTip(tooltip)
+            # Show pointer cursor to indicate row is clickable
+            self.setCursor(Qt.PointingHandCursor)
         else:
             self.setToolTip("")
+            self.setCursor(Qt.ArrowCursor)
+
+    def leaveEvent(self, event):
+        """Reset cursor when leaving widget"""
+        self.setCursor(Qt.ArrowCursor)
+        super().leaveEvent(event)
 
     def mouseDoubleClickEvent(self, event):
         """Handle double-click to open edit dialog"""
+        y = event.pos().y()
+        if y < self.header_height:
+            return
+
+        row_index = (y - self.header_height) // self.row_height
+        if 0 <= row_index < len(self.items):
+            item = self.items[row_index]
+            self.item_clicked.emit(item['num'])
+
+    def mousePressEvent(self, event):
+        """Handle single-click to open edit dialog (same as double-click for convenience)"""
+        # Only respond to left-click
+        if event.button() != Qt.LeftButton:
+            return
+
         y = event.pos().y()
         if y < self.header_height:
             return

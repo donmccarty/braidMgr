@@ -18,8 +18,8 @@ authors = [
 keywords = ["project-management", "raid-log", "desktop-app"]
 
 dependencies = [
-    "PySide6>=6.6.0",
     "pyyaml>=6.0",
+    # PySide6 specified per-platform in Briefcase config to use Essentials package
 ]
 
 [project.optional-dependencies]
@@ -58,8 +58,52 @@ test_sources = ["tests"]
 requires = [
     "PySide6-Essentials>=6.6.0",  # Smaller package without WebEngine
 ]
-# Use system Python framework
 universal_build = true
+
+# Remove unused Qt modules to reduce app size
+# We only need QtCore, QtGui, QtWidgets
+cleanup_paths = [
+    "app_packages/PySide6/Qt/lib/Qt3D*",
+    "app_packages/PySide6/Qt/lib/QtBluetooth*",
+    "app_packages/PySide6/Qt/lib/QtCharts*",
+    "app_packages/PySide6/Qt/lib/QtConcurrent*",
+    "app_packages/PySide6/Qt/lib/QtDataVisualization*",
+    "app_packages/PySide6/Qt/lib/QtDesigner*",
+    "app_packages/PySide6/Qt/lib/QtHelp*",
+    "app_packages/PySide6/Qt/lib/QtLocation*",
+    "app_packages/PySide6/Qt/lib/QtMultimedia*",
+    "app_packages/PySide6/Qt/lib/QtNetwork*",
+    "app_packages/PySide6/Qt/lib/QtNfc*",
+    "app_packages/PySide6/Qt/lib/QtOpenGL*",
+    "app_packages/PySide6/Qt/lib/QtPdf*",
+    "app_packages/PySide6/Qt/lib/QtPositioning*",
+    "app_packages/PySide6/Qt/lib/QtPrint*",
+    "app_packages/PySide6/Qt/lib/QtQml*",
+    "app_packages/PySide6/Qt/lib/QtQuick*",
+    "app_packages/PySide6/Qt/lib/QtRemoteObjects*",
+    "app_packages/PySide6/Qt/lib/QtScxml*",
+    "app_packages/PySide6/Qt/lib/QtSensors*",
+    "app_packages/PySide6/Qt/lib/QtSerialPort*",
+    "app_packages/PySide6/Qt/lib/QtShaderTools*",
+    "app_packages/PySide6/Qt/lib/QtSpatialAudio*",
+    "app_packages/PySide6/Qt/lib/QtSql*",
+    "app_packages/PySide6/Qt/lib/QtSvg*",
+    "app_packages/PySide6/Qt/lib/QtTest*",
+    "app_packages/PySide6/Qt/lib/QtTextToSpeech*",
+    "app_packages/PySide6/Qt/lib/QtVirtualKeyboard*",
+    "app_packages/PySide6/Qt/lib/QtWeb*",
+    "app_packages/PySide6/Qt/lib/QtXml*",
+    "app_packages/PySide6/Qt/plugins/designer",
+    "app_packages/PySide6/Qt/plugins/multimedia",
+    "app_packages/PySide6/Qt/plugins/position",
+    "app_packages/PySide6/Qt/plugins/qmltooling",
+    "app_packages/PySide6/Qt/plugins/sensors",
+    "app_packages/PySide6/Qt/plugins/sqldrivers",
+    "app_packages/PySide6/Qt/plugins/texttospeech",
+    "app_packages/PySide6/Qt/plugins/virtualkeyboard",
+    "app_packages/PySide6/Qt/qml",
+    "app_packages/PySide6/Qt/translations",
+]
 
 [tool.briefcase.app.braidmanager.macOS.app]
 # Build a .app bundle
