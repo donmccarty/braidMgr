@@ -7,8 +7,8 @@
 # =============================================================================
 # version: Semantic version of current state
 # progress_percent: Overall completion percentage
-version: "0.2"
-progress_percent: 10
+version: "0.3"
+progress_percent: 20
 
 # =============================================================================
 # Documentation Status
@@ -125,8 +125,8 @@ sequences:
     name: Foundation
     file: stories/seq-01-foundation.md
     stories_total: 8
-    stories_complete: 0
-    status: pending
+    stories_complete: 8
+    status: complete
     priority: MVP
   - id: 2
     name: Authentication
@@ -224,24 +224,27 @@ sequences:
 # Test Counts
 # =============================================================================
 tests:
-  unit: 0
+  unit: 141
   integration: 0
   e2e: 0
-  total: 0
+  total: 141
 
 # =============================================================================
 # Next Actions
 # =============================================================================
 next_sequence:
-  id: 1
-  name: Foundation
-  description: "FastAPI backend, React frontend scaffold, PostgreSQL setup"
+  id: 2
+  name: Authentication
+  description: "JWT auth, user registration, login/logout, password reset"
 
 # =============================================================================
 # History
 # =============================================================================
 # Track major milestones
 history:
+  - date: 2024-12-24
+    event: "Sequence 1 Foundation completed"
+    details: "FastAPI backend with ServiceRegistry, exception handling, structured logging, correlation IDs. React frontend with Vite/TypeScript/Tailwind. PostgreSQL schema with 18 tables via Alembic. Docker Compose dev environment."
   - date: 2024-12-24
     event: "Documentation split for maintainability"
     details: "Split large docs into subdirectories: requirements/ (3), stories/ (14), data-model/ (5), architecture/ (9), patterns/ (9), flows/ (8). Total 55 markdown files, all under 300 lines."

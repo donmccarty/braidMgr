@@ -1,0 +1,71 @@
+# =============================================================================
+# braidMgr Backend Dockerfile
+# =============================================================================
+# Multi-stage build for Python FastAPI application
+# Development: docker-compose with volume mounts for hot reload
+# Production: optimized image with compiled dependencies
+# =============================================================================
+
+FROM python:3.11-slim as base
+
+# Set environment variables
+# Prevents Python from writing pyc files
+ENV PYTHONDONTWRITEBYTECODE=1
+# Keeps Python from buffering stdout/stderr
+ENV PYTHONUNBUFFERED=1
+# Set working directory
+WORKDIR /app
+
+# Install system dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    # Required for asyncpg
+    libpq-dev \
+    # Required for building some Python packages
+    gcc \
+    && rm -rf /var/lib/apt/lists/*
+
+# =============================================================================
+# Development Stage
+# =============================================================================
+FROM base as development
+
+# Copy requirements first for caching
+COPY backend/requirements.txt .
+
+# Install Python dependencies
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Copy source code (mounted as volume in docker-compose for hot reload)
+COPY backend/src ./src
+COPY config.yaml ./
+
+# Expose port
+EXPOSE 8000
+
+# Run uvicorn with reload for development
+CMD ["uvicorn", "src.api.main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
+
+# =============================================================================
+# Production Stage
+# =============================================================================
+FROM base as production
+
+# Copy requirements
+COPY backend/requirements.txt .
+
+# Install Python dependencies (no dev dependencies)
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Copy application code
+COPY backend/src ./src
+COPY config.yaml ./
+
+# Create non-root user for security
+RUN adduser --disabled-password --gecos "" appuser
+USER appuser
+
+# Expose port
+EXPOSE 8000
+
+# Run uvicorn for production (no reload)
+CMD ["uvicorn", "src.api.main:app", "--host", "0.0.0.0", "--port", "8000"]

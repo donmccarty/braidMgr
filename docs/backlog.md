@@ -172,6 +172,37 @@ Redesign budget schema for optimal flexibility (not v1 format).
 
 ---
 
+### DECISION-007: Project Locking for Multi-User
+
+**Status**: Pending
+**Date**: 2024-12-24
+**Applies to**: Sequence 7 (Multi-User)
+
+Use pessimistic locking for project editing instead of real-time collaboration.
+
+**Proposed Model**:
+- One PM locks a project for editing (explicit checkout)
+- While locked, others have read-only access
+- Lock timeout (TBD: 30 min?) or manual release
+- Org admins can force-unlock if needed
+
+**Portfolio Views**:
+- Read-only aggregate views (no locking needed)
+- Program manager can add portfolio-level notes (separate from project data)
+- Optional: "Lock for review" to freeze projects temporarily
+
+**Rationale**:
+- Simpler than real-time collaboration (no WebSockets, no conflict resolution)
+- Fits traditional PM workflow (one owner at a time)
+- Avoids merge conflicts entirely
+
+**Open Questions**:
+- Lock timeout duration?
+- Lock at project level or workstream level?
+- Portfolio notes: simple text or structured items?
+
+---
+
 ## P0: Blocking Issues
 
 None currently.

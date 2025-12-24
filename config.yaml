@@ -1,0 +1,173 @@
+# =============================================================================
+# braidMgr Configuration
+# =============================================================================
+# Single source of truth for all environment configuration.
+# Environment variables are substituted using ${VAR:-default} syntax.
+#
+# Usage:
+#   - ${VAR} - Required environment variable (empty string if not set)
+#   - ${VAR:-default} - Optional with default value
+#
+# Local development uses defaults; production overrides via environment.
+# =============================================================================
+
+# Environment name: development, staging, production
+# Controls logging format (console vs JSON) and service dry_run modes
+environment: ${ENVIRONMENT:-development}
+
+# =============================================================================
+# Database Configuration
+# =============================================================================
+# PostgreSQL/Aurora connection settings.
+# For v1.5, single database is used. Multi-tenant database-per-org comes later.
+database:
+  # Database server hostname
+  host: ${DB_HOST:-localhost}
+
+  # PostgreSQL port (default 5432)
+  port: ${DB_PORT:-5432}
+
+  # Database name for single-tenant mode
+  # Multi-tenant: central DB is braidmgr_central, org DBs are braidmgr_org_{slug}
+  name: ${DB_NAME:-braidmgr_dev}
+
+  # Database credentials
+  user: ${DB_USER:-postgres}
+  password: ${DB_PASSWORD:-postgres}
+
+  # Connection pool settings
+  pool:
+    # Minimum connections to keep open
+    min_connections: ${DB_POOL_MIN:-2}
+
+    # Maximum connections allowed
+    max_connections: ${DB_POOL_MAX:-10}
+
+    # Query timeout in seconds
+    connection_timeout: ${DB_CONNECTION_TIMEOUT:-30}
+
+# =============================================================================
+# Application Settings
+# =============================================================================
+application:
+  # REST API configuration
+  api:
+    # Bind address (0.0.0.0 for Docker, 127.0.0.1 for local only)
+    host: ${API_HOST:-0.0.0.0}
+
+    # API server port
+    port: ${API_PORT:-8000}
+
+    # CORS allowed origins (comma-separated for multiple)
+    # Frontend dev server runs on 5173
+    cors_origins: ${CORS_ORIGINS:-http://localhost:5173,http://localhost:3000}
+
+  # JWT authentication settings
+  auth:
+    # Secret key for JWT signing (CHANGE IN PRODUCTION!)
+    jwt_secret: ${JWT_SECRET:-dev-secret-change-in-production}
+
+    # JWT signing algorithm
+    jwt_algorithm: HS256
+
+    # Access token expiry in minutes (15 min for security)
+    access_token_expiry_minutes: ${JWT_ACCESS_EXPIRY_MINUTES:-15}
+
+    # Refresh token expiry in days
+    refresh_token_expiry_days: ${REFRESH_TOKEN_EXPIRY_DAYS:-7}
+
+    # Password hashing - bcrypt cost factor (higher = slower but more secure)
+    bcrypt_rounds: 12
+
+    # Minimum password length
+    min_password_length: 8
+
+    # Password reset token expiry in hours
+    reset_token_expiry_hours: 1
+
+    # Rate limiting - max failed login attempts before lockout
+    max_login_attempts: 5
+
+    # Lockout duration in minutes after max failed attempts
+    lockout_duration_minutes: 30
+
+    # OAuth providers
+    oauth:
+      # Google OAuth 2.0
+      google:
+        # Google OAuth client ID
+        client_id: ${GOOGLE_CLIENT_ID:-}
+
+        # Google OAuth client secret
+        client_secret: ${GOOGLE_CLIENT_SECRET:-}
+
+        # Redirect URI for OAuth callback
+        redirect_uri: ${GOOGLE_REDIRECT_URI:-http://localhost:8000/auth/oauth/google/callback}
+
+      # Microsoft Azure AD OAuth
+      microsoft:
+        # Microsoft OAuth client ID
+        client_id: ${MICROSOFT_CLIENT_ID:-}
+
+        # Microsoft OAuth client secret
+        client_secret: ${MICROSOFT_CLIENT_SECRET:-}
+
+        # Azure AD tenant ID (use 'common' for multi-tenant)
+        tenant_id: ${MICROSOFT_TENANT_ID:-common}
+
+        # Redirect URI for OAuth callback
+        redirect_uri: ${MICROSOFT_REDIRECT_URI:-http://localhost:8000/auth/oauth/microsoft/callback}
+
+  # Logging configuration
+  logging:
+    # Log level: DEBUG, INFO, WARNING, ERROR, CRITICAL
+    level: ${LOG_LEVEL:-INFO}
+
+    # Output format: json (production) or console (development)
+    # Auto-detected from environment if not specified
+    format: ${LOG_FORMAT:-auto}
+
+  # Debug settings (development only)
+  debug:
+    # Enable debug mode (extra logging, stack traces in responses)
+    enabled: ${DEBUG:-false}
+
+    # Echo SQL queries to console
+    sql_echo: ${SQL_ECHO:-false}
+
+# =============================================================================
+# External Integrations (Future)
+# =============================================================================
+# Placeholder for future service integrations
+integrations:
+  # AI chat via Anthropic Claude
+  anthropic:
+    # Anthropic API key for Claude integration
+    api_key: ${ANTHROPIC_API_KEY:-}
+
+    # Model to use for AI chat (claude-3-5-sonnet, claude-3-opus, etc.)
+    model: ${ANTHROPIC_MODEL:-claude-3-5-sonnet-20241022}
+
+  # Email delivery (SendGrid, SES, etc.)
+  email:
+    # Email provider: ses, sendgrid, smtp
+    provider: ${EMAIL_PROVIDER:-ses}
+
+    # From address for transactional emails
+    from_address: ${EMAIL_FROM:-noreply@braidmgr.com}
+
+# =============================================================================
+# AWS Configuration (Future)
+# =============================================================================
+# Placeholder for AWS services when deployed
+aws:
+  # AWS region
+  region: ${AWS_REGION:-us-east-1}
+
+  # S3 document storage
+  s3:
+    # Bucket for attachments
+    bucket_documents: ${S3_BUCKET_DOCUMENTS:-braidmgr-documents-dev}
+
+    # Pre-signed URL expiry in seconds
+    presigned_url_expiry: ${S3_URL_EXPIRY:-3600}
