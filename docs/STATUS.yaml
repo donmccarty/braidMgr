@@ -13,30 +13,105 @@ progress_percent: 10
 # =============================================================================
 # Documentation Status
 # =============================================================================
+# Documents are split into subdirectories for maintainability (< 300 lines each)
+# Parent docs link to child docs, child docs link back to parent
 docs:
   requirements:
+    # Business requirements with unique IDs (PAR, WEB, ENT)
     status: complete
     file: REQUIREMENTS.md
     requirements_count: 35
+    subdirectory: requirements/
+    children:
+      - feature-parity.md    # PAR-001 to PAR-018
+      - web-platform.md      # WEB-001 to WEB-008
+      - enterprise.md        # ENT-001 to ENT-009
+
   user_stories:
+    # Sequenced stories tracing to requirements
     status: complete
     file: USER_STORIES.md
     story_count: 65
     mvp_stories: 57
+    subdirectory: stories/
+    children:
+      - seq-01-foundation.md
+      - seq-02-authentication.md
+      - seq-03-core-data.md
+      - seq-04-views.md
+      - seq-05-budget.md
+      - seq-06-pwa.md
+      - seq-07-multi-user.md
+      - seq-08-multi-org.md
+      - seq-09-portfolios.md
+      - seq-10-ai-chat.md
+      - seq-11-attachments.md
+      - seq-12-exports.md
+      - seq-13-sso.md
+      - seq-14-global-search.md
+
   data_model:
+    # Logical data model with Mermaid ERD
     status: complete
     file: DATA_MODEL.md
     entities_count: 18
+    subdirectory: data-model/
+    children:
+      - core-entities.md       # Organization, User, Project, Portfolio
+      - item-entities.md       # Item, Workstream, Notes, Dependencies
+      - budget-entities.md     # RateCard, Allocation, Timesheet
+      - access-chat-entities.md # Roles, Chat, Audit
+      - enums-architecture.md  # Enums, DB architecture, migration
+
   architecture:
+    # System design, tech stack, services
     status: complete
     file: ARCHITECTURE.md
+    subdirectory: architecture/
+    children:
+      - tech-stack.md
+      - project-structure.md
+      - services.md
+      - api-design.md
+      - database.md
+      - auth-rbac.md
+      - ai-integration.md
+      - frontend.md
+      - deployment.md
+
   patterns:
+    # Code patterns, error handling, testing
     status: complete
     file: PATTERNS.md
+    subdirectory: patterns/
+    children:
+      - error-handling.md
+      - logging.md
+      - middleware.md
+      - service-patterns.md
+      - repository-patterns.md
+      - testing.md
+      - async-patterns.md
+      - validation-patterns.md
+      - react-patterns.md
+
   process_flows:
+    # State machines and workflows
     status: complete
     file: PROCESS_FLOWS.md
+    subdirectory: flows/
+    children:
+      - item-lifecycle.md
+      - auth-flows.md
+      - crud-flows.md
+      - budget-flows.md
+      - chat-flows.md
+      - tenancy-flows.md
+      - export-flows.md
+      - permission-flows.md
+
   backlog:
+    # Technical decisions and priorities
     status: complete
     file: backlog.md
 
@@ -44,87 +119,102 @@ docs:
 # Sequence Status
 # =============================================================================
 # Each sequence tracks stories complete vs total
+# Sequence docs at: stories/seq-NN-name.md
 sequences:
   - id: 1
     name: Foundation
+    file: stories/seq-01-foundation.md
     stories_total: 8
     stories_complete: 0
     status: pending
     priority: MVP
   - id: 2
     name: Authentication
+    file: stories/seq-02-authentication.md
     stories_total: 6
     stories_complete: 0
     status: pending
     priority: MVP
   - id: 3
     name: Core Data
+    file: stories/seq-03-core-data.md
     stories_total: 8
     stories_complete: 0
     status: pending
     priority: MVP
   - id: 4
     name: Views
-    stories_total: 7
+    file: stories/seq-04-views.md
+    stories_total: 8
     stories_complete: 0
     status: pending
     priority: MVP
   - id: 5
     name: Budget
+    file: stories/seq-05-budget.md
     stories_total: 4
     stories_complete: 0
     status: pending
     priority: MVP
   - id: 6
     name: PWA
+    file: stories/seq-06-pwa.md
     stories_total: 3
     stories_complete: 0
     status: pending
     priority: MVP
   - id: 7
     name: Multi-User
-    stories_total: 5
+    file: stories/seq-07-multi-user.md
+    stories_total: 6
     stories_complete: 0
     status: pending
     priority: MVP
   - id: 8
     name: Multi-Org
+    file: stories/seq-08-multi-org.md
     stories_total: 4
     stories_complete: 0
     status: pending
     priority: MVP
   - id: 9
     name: Portfolios
+    file: stories/seq-09-portfolios.md
     stories_total: 3
     stories_complete: 0
     status: pending
     priority: MVP
   - id: 10
     name: AI Chat
+    file: stories/seq-10-ai-chat.md
     stories_total: 5
     stories_complete: 0
     status: pending
     priority: MVP
   - id: 11
     name: Attachments
+    file: stories/seq-11-attachments.md
     stories_total: 3
     stories_complete: 0
     status: pending
     priority: Post-MVP
   - id: 12
     name: Exports
+    file: stories/seq-12-exports.md
     stories_total: 3
     stories_complete: 0
     status: pending
     priority: MVP
   - id: 13
     name: SSO
+    file: stories/seq-13-sso.md
     stories_total: 2
     stories_complete: 0
     status: pending
     priority: Post-MVP
   - id: 14
     name: Global Search
+    file: stories/seq-14-global-search.md
     stories_total: 2
     stories_complete: 0
     status: pending
@@ -152,6 +242,9 @@ next_sequence:
 # =============================================================================
 # Track major milestones
 history:
+  - date: 2024-12-24
+    event: "Documentation split for maintainability"
+    details: "Split large docs into subdirectories: requirements/ (3), stories/ (14), data-model/ (5), architecture/ (9), patterns/ (9), flows/ (8). Total 55 markdown files, all under 300 lines."
   - date: 2024-12-24
     event: "Documentation phase completed"
     details: "Created all core documentation: REQUIREMENTS.md (35 requirements), USER_STORIES.md (65 stories), DATA_MODEL.md (18 entities), ARCHITECTURE.md, PATTERNS.md, PROCESS_FLOWS.md, backlog.md, STATUS.yaml"
