@@ -1,0 +1,187 @@
+# Sample RAID Log YAML File for v1 to v2 Migration Testing
+# This file demonstrates the expected v1 format
+#
+# Usage:
+#   python scripts/import_yaml.py raid scripts/sample-raid-log.yaml --dry-run
+#   python scripts/import_yaml.py raid scripts/sample-raid-log.yaml --org "Test Org"
+
+# =============================================================================
+# Project Metadata
+# =============================================================================
+metadata:
+  # project_name: Required - name of the project
+  project_name: "Sample Platform Upgrade"
+
+  # client_name: Optional - client or customer name
+  client_name: "Acme Corporation"
+
+  # project_start: Optional - project start date (YYYY-MM-DD format)
+  project_start: "2024-01-15"
+
+  # project_end: Optional - project end date (YYYY-MM-DD format)
+  project_end: "2024-06-30"
+
+  # next_item_num: Auto-increment counter for new items
+  next_item_num: 8
+
+  # workstreams: List of workstream names for organizing items
+  workstreams:
+    - "Development"
+    - "Testing"
+    - "Deployment"
+    - "Documentation"
+
+# =============================================================================
+# Items
+# =============================================================================
+items:
+  # -------------------------------------------------------------------------
+  # Risk Example
+  # -------------------------------------------------------------------------
+  - item_num: 1
+    # type: Required - one of: Budget, Risk, Action Item, Issue, Decision, Deliverable, Plan Item
+    type: "Risk"
+
+    # title: Required - brief summary (max 500 chars)
+    title: "Database migration may exceed timeline"
+
+    # description: Optional - detailed explanation
+    description: |
+      The legacy database has a complex schema with over 200 tables.
+      Migration testing has revealed several edge cases that need
+      special handling.
+
+    # workstream: Optional - must match one of metadata.workstreams
+    workstream: "Development"
+
+    # assigned_to: Optional - person responsible
+    assigned_to: "John Smith"
+
+    # start: Optional - planned start date
+    start: "2024-02-01"
+
+    # finish: Optional - planned finish date
+    finish: "2024-02-28"
+
+    # deadline: Optional - hard deadline (different from finish)
+    deadline: "2024-03-15"
+
+    # percent_complete: 0-100
+    percent_complete: 25
+
+    # priority: Optional - e.g., High, Medium, Low
+    priority: "High"
+
+    # draft: If true, item is hidden from most views
+    draft: false
+
+    # client_visible: If false, item is internal only
+    client_visible: true
+
+    # rpt_out: Optional - list of report codes
+    rpt_out:
+      - "SR"
+      - "CL"
+
+    # notes: Optional - dated notes in "YYYY-MM-DD: content" format
+    notes: |
+      2024-01-20: Initial risk identified during sprint planning
+      2024-01-25: Met with DBA team to discuss mitigation strategies
+      2024-02-01: Started migration proof-of-concept
+
+  # -------------------------------------------------------------------------
+  # Action Item Example
+  # -------------------------------------------------------------------------
+  - item_num: 2
+    type: "Action Item"
+    title: "Set up CI/CD pipeline"
+    description: "Configure GitHub Actions for automated testing and deployment"
+    workstream: "Deployment"
+    assigned_to: "Jane Doe"
+    start: "2024-01-20"
+    finish: "2024-01-31"
+    percent_complete: 100
+    priority: "Medium"
+    notes: |
+      2024-01-20: Started pipeline configuration
+      2024-01-28: Pipeline working for dev environment
+      2024-01-31: Completed - all environments configured
+
+  # -------------------------------------------------------------------------
+  # Issue Example
+  # -------------------------------------------------------------------------
+  - item_num: 3
+    type: "Issue"
+    title: "Memory leak in report generation"
+    description: |
+      The weekly report generation process is consuming excessive memory
+      and occasionally causing the server to run out of resources.
+    workstream: "Development"
+    assigned_to: "Bob Wilson"
+    start: "2024-02-05"
+    finish: "2024-02-10"
+    percent_complete: 60
+    priority: "High"
+    # dep_item_num: Optional - list of item numbers this depends on
+    dep_item_num: [2]
+
+  # -------------------------------------------------------------------------
+  # Decision Example
+  # -------------------------------------------------------------------------
+  - item_num: 4
+    type: "Decision"
+    title: "Use PostgreSQL instead of MySQL for v2"
+    description: |
+      After evaluating both options, the team decided to use PostgreSQL
+      for the v2 platform due to better JSON support and Aurora compatibility.
+    workstream: "Development"
+    assigned_to: "Tech Lead"
+    percent_complete: 100
+    notes: |
+      2024-01-10: Decision meeting held with stakeholders
+      2024-01-10: Unanimous agreement on PostgreSQL
+
+  # -------------------------------------------------------------------------
+  # Deliverable Example
+  # -------------------------------------------------------------------------
+  - item_num: 5
+    type: "Deliverable"
+    title: "API Documentation"
+    description: "Complete OpenAPI/Swagger documentation for all endpoints"
+    workstream: "Documentation"
+    assigned_to: "Sarah Chen"
+    start: "2024-02-15"
+    finish: "2024-03-01"
+    deadline: "2024-03-01"
+    percent_complete: 0
+    priority: "Medium"
+    client_visible: true
+
+  # -------------------------------------------------------------------------
+  # Plan Item (Milestone) Example
+  # -------------------------------------------------------------------------
+  - item_num: 6
+    type: "Plan Item"
+    title: "Beta Release"
+    description: "Release beta version to select customers for feedback"
+    start: "2024-04-01"
+    finish: "2024-04-01"
+    deadline: "2024-04-01"
+    percent_complete: 0
+    priority: "High"
+    client_visible: true
+    dep_item_num: [1, 3, 5]
+
+  # -------------------------------------------------------------------------
+  # Budget Example
+  # -------------------------------------------------------------------------
+  - item_num: 7
+    type: "Budget"
+    title: "Infrastructure costs for Q1"
+    description: "AWS infrastructure costs for development and staging environments"
+    workstream: "Deployment"
+    budget_amount: 15000.00
+    percent_complete: 45
+    notes: |
+      2024-01-31: January spend: $4,500
+      2024-02-29: February spend: $5,200
