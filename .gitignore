@@ -37,3 +37,11 @@ Thumbs.db
 
 # Local config
 .env
+
+# MkDocs build output
+site/
+
+# Playwright test artifacts
+test-results/
+e2e-report/
+.features-gen/

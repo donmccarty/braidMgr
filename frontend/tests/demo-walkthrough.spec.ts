@@ -30,20 +30,20 @@ async function showNarration(
       container.id = "demo-narration";
       container.style.cssText = `
       position: fixed;
-      bottom: 40px;
+      bottom: 100px;
       left: 50%;
       transform: translateX(-50%);
       background: linear-gradient(135deg, rgba(15, 23, 42, 0.95), rgba(30, 41, 59, 0.95));
       color: white;
-      padding: 28px 56px;
-      border-radius: 20px;
+      padding: 24px 48px;
+      border-radius: 16px;
       z-index: 999999;
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
       text-align: center;
       box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
       border: 1px solid rgba(255, 255, 255, 0.1);
       backdrop-filter: blur(10px);
-      max-width: 900px;
+      max-width: 800px;
       animation: fadeIn 0.4s ease-out;
     `;
 
@@ -61,9 +61,9 @@ async function showNarration(
 
       const titleEl = document.createElement("div");
       titleEl.style.cssText = `
-      font-size: 36px;
+      font-size: 28px;
       font-weight: 700;
-      margin-bottom: ${subtitle ? "14px" : "0"};
+      margin-bottom: ${subtitle ? "10px" : "0"};
       letter-spacing: -0.5px;
     `;
       titleEl.textContent = title;
@@ -72,10 +72,10 @@ async function showNarration(
       if (subtitle) {
         const subtitleEl = document.createElement("div");
         subtitleEl.style.cssText = `
-        font-size: 22px;
+        font-size: 18px;
         font-weight: 400;
         color: rgba(255, 255, 255, 0.85);
-        line-height: 1.5;
+        line-height: 1.4;
       `;
         subtitleEl.textContent = subtitle;
         container.appendChild(subtitleEl);

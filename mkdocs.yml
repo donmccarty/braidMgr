@@ -1,0 +1,136 @@
+# =============================================================================
+# MkDocs Configuration for braidMgr
+# =============================================================================
+# Build: mkdocs build
+# Serve: mkdocs serve
+# Deploy: mkdocs gh-deploy (GitHub Pages)
+# =============================================================================
+
+site_name: BRAID Manager
+site_description: Multi-tenant Budget & RAID log management
+site_author: Don McCarty
+site_url: https://donmccarty.github.io/braidMgr/
+
+# Repository info (shows edit links)
+repo_name: braidMgr
+repo_url: https://github.com/donmccarty/braidMgr
+
+# Documentation directory
+docs_dir: docs
+
+# Build output directory
+site_dir: site
+
+# Theme configuration
+theme:
+  name: material
+  palette:
+    # Light mode
+    - scheme: default
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    # Dark mode
+    - scheme: slate
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+  features:
+    - navigation.tabs
+    - navigation.sections
+    - navigation.expand
+    - navigation.top
+    - search.suggest
+    - search.highlight
+    - content.code.copy
+  icon:
+    repo: fontawesome/brands/github
+
+# Extensions
+markdown_extensions:
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.superfences
+  - pymdownx.tabbed:
+      alternate_style: true
+  - admonition
+  - pymdownx.details
+  - tables
+  - toc:
+      permalink: true
+
+# Plugins
+plugins:
+  - search
+
+# Navigation structure
+nav:
+  - Home: ARCHITECTURE.md
+  - Architecture:
+    - Overview: ARCHITECTURE.md
+    - Tech Stack: architecture/tech-stack.md
+    - Project Structure: architecture/project-structure.md
+    - Services: architecture/services.md
+    - API Design: architecture/api-design.md
+    - Database: architecture/database.md
+    - Auth & RBAC: architecture/auth-rbac.md
+    - AI Integration: architecture/ai-integration.md
+    - Frontend: architecture/frontend.md
+    - Deployment: architecture/deployment.md
+  - Data Model:
+    - Overview: DATA_MODEL.md
+    - Core Entities: data-model/core-entities.md
+    - Item Entities: data-model/item-entities.md
+    - Budget Entities: data-model/budget-entities.md
+    - Access & Chat: data-model/access-chat-entities.md
+    - Enums: data-model/enums-architecture.md
+  - Process Flows:
+    - Overview: PROCESS_FLOWS.md
+    - Item Lifecycle: flows/item-lifecycle.md
+    - Auth Flows: flows/auth-flows.md
+    - CRUD Flows: flows/crud-flows.md
+    - Budget Flows: flows/budget-flows.md
+    - Chat Flows: flows/chat-flows.md
+    - Tenancy Flows: flows/tenancy-flows.md
+    - Export Flows: flows/export-flows.md
+    - Permission Flows: flows/permission-flows.md
+  - Patterns:
+    - Overview: PATTERNS.md
+    - Error Handling: patterns/error-handling.md
+    - Logging: patterns/logging.md
+    - Middleware: patterns/middleware.md
+    - Service Patterns: patterns/service-patterns.md
+    - Repository Patterns: patterns/repository-patterns.md
+    - Testing: patterns/testing.md
+    - Async Patterns: patterns/async-patterns.md
+    - Validation: patterns/validation-patterns.md
+    - React Patterns: patterns/react-patterns.md
+  - Requirements:
+    - Overview: REQUIREMENTS.md
+    - Feature Parity: requirements/feature-parity.md
+    - Web Platform: requirements/web-platform.md
+    - Enterprise: requirements/enterprise.md
+  - User Stories:
+    - Overview: USER_STORIES.md
+    - S1 - Foundation: stories/seq-01-foundation.md
+    - S2 - Authentication: stories/seq-02-authentication.md
+    - S3 - Core Data: stories/seq-03-core-data.md
+    - S4 - Views: stories/seq-04-views.md
+    - S5 - Budget: stories/seq-05-budget.md
+    - S6 - PWA: stories/seq-06-pwa.md
+    - S7 - Multi-User: stories/seq-07-multi-user.md
+    - S8 - Multi-Org: stories/seq-08-multi-org.md
+    - S9 - Portfolios: stories/seq-09-portfolios.md
+    - S10 - AI Chat: stories/seq-10-ai-chat.md
+    - S11 - Attachments: stories/seq-11-attachments.md
+    - S12 - Exports: stories/seq-12-exports.md
+    - S13 - SSO: stories/seq-13-sso.md
+    - S14 - Global Search: stories/seq-14-global-search.md
+  - Testing:
+    - Test Plan: TEST_PLAN.md
+    - Testing Patterns: patterns/testing.md
+  - Backlog: backlog.md
