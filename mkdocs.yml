@@ -69,7 +69,7 @@ plugins:
 
 # Navigation structure
 nav:
-  - Home: ARCHITECTURE.md
+  - Home: index.md
   - Architecture:
     - Overview: ARCHITECTURE.md
     - Tech Stack: architecture/tech-stack.md
