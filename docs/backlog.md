@@ -1,6 +1,6 @@
 # braidMgr Backlog
 
-*Last updated: 2025-12-26*
+*Last updated: 2025-12-27*
 
 This document tracks technical decisions, priorities, and pending work items outside the main user story sequences.
 
@@ -101,6 +101,40 @@ Add secrets to GitHub repo for automatic docs deployment.
 - `CLOUDFLARE_ACCOUNT_ID` - `88e50c4ee658ed559d5153f0b2f7e77b`
 
 **Note**: Until added, deploy docs manually with `wrangler pages deploy site --project-name braidmgr-docs`
+
+---
+
+### DEMO-001: Record Comprehensive Demo with Chat
+
+**Status**: Pending
+**Priority**: P2
+
+Record new demo video showcasing all functionality including AI chat.
+
+**Prerequisites**:
+- braidMgr backend running on port 8000 (not ali-ai-acctg)
+- Frontend dev server running on port 5173
+- Test data loaded in database
+
+**Demo sections** (in demo-walkthrough.spec.ts):
+1. Login flow
+2. Project selection
+3. Dashboard overview
+4. All Items view with filtering
+5. Active Items (severity grouping)
+6. Timeline view
+7. Deliverables view
+8. **AI Chat Assistant** (NEW)
+   - Query data: "What items are overdue or at risk?"
+   - Meeting notes to actions: paste notes, get proposed updates
+9. Closing
+
+**To run**:
+```bash
+cd frontend && npx playwright test --project=demo-recording --reporter=list
+```
+
+**Output**: `docs/demo/braidmgr-demo.webm`
 
 ---
 
@@ -253,7 +287,7 @@ None currently.
 
 | ID | Description | Status |
 |----|-------------|--------|
-| - | None | - |
+| DEMO-001 | Record comprehensive demo with chat | Pending |
 
 ---
 

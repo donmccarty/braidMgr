@@ -45,3 +45,14 @@ site/
 test-results/
 e2e-report/
 .features-gen/
+
+# TypeScript build info
+tsconfig.tsbuildinfo
+*.tsbuildinfo
+
+# Demo recordings (large files)
+docs/demo/*.webm
+docs/demo/*.mp4
+
+# Session notes
+session grab*.txt

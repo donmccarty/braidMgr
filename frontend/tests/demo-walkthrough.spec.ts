@@ -594,13 +594,97 @@ test.describe("braidMgr Demo Walkthrough", () => {
     await page.waitForTimeout(3500);
 
     // =========================================================================
-    // SECTION 8: BACK TO DASHBOARD - CLOSING
+    // SECTION 8: AI CHAT ASSISTANT
     // =========================================================================
 
     await hideNarration(page);
     await page.click('text="Dashboard"');
     await page.waitForLoadState("networkidle");
-    await page.waitForTimeout(1500);
+    await page.waitForTimeout(1000);
+
+    await showNarration(
+      page,
+      "AI Chat Assistant",
+      "Ask questions about your project in natural language"
+    );
+    await page.waitForTimeout(3500);
+
+    // Open chat drawer
+    const chatButton = page.locator('button[aria-label="Open chat"]');
+    if (await chatButton.isVisible({ timeout: 2000 }).catch(() => false)) {
+      await chatButton.click();
+      await page.waitForTimeout(1500);
+
+      await showNarration(
+        page,
+        "Query Your Data",
+        "Ask Claude about items, risks, deadlines, and more"
+      );
+      await page.waitForTimeout(3000);
+
+      // Type a question about overdue items
+      const chatInput = page.locator('textarea[placeholder*="Ask"], input[placeholder*="Ask"]').first();
+      if (await chatInput.isVisible({ timeout: 2000 }).catch(() => false)) {
+        await chatInput.fill("What items are currently overdue or at risk?");
+        await page.waitForTimeout(2000);
+
+        // Submit the message
+        const sendButton = page.locator('button[type="submit"], button:has-text("Send")').first();
+        if (await sendButton.isVisible({ timeout: 1000 }).catch(() => false)) {
+          await sendButton.click();
+        } else {
+          await chatInput.press("Enter");
+        }
+
+        await showNarration(
+          page,
+          "Instant Insights",
+          "Get AI-powered analysis of your project status"
+        );
+
+        // Wait for response (with timeout)
+        await page.waitForTimeout(8000);
+
+        await showNarration(
+          page,
+          "Meeting Notes to Actions",
+          "Paste notes and get proposed updates"
+        );
+        await page.waitForTimeout(3000);
+
+        // Clear and type meeting notes example
+        await chatInput.fill("Based on today's meeting: The data migration is delayed by 2 weeks due to schema changes. We need to escalate the contractor cost issue to leadership.");
+        await page.waitForTimeout(3000);
+
+        // Submit
+        if (await sendButton.isVisible({ timeout: 1000 }).catch(() => false)) {
+          await sendButton.click();
+        } else {
+          await chatInput.press("Enter");
+        }
+
+        await showNarration(
+          page,
+          "Smart Suggestions",
+          "Claude proposes item updates based on your notes"
+        );
+        await page.waitForTimeout(8000);
+      }
+
+      // Close chat drawer
+      const closeButton = page.locator('button:has-text("×"), button[aria-label="Close"]').first();
+      if (await closeButton.isVisible({ timeout: 1000 }).catch(() => false)) {
+        await closeButton.click();
+      }
+      await page.waitForTimeout(1000);
+    }
+
+    // =========================================================================
+    // SECTION 9: CLOSING
+    // =========================================================================
+
+    await hideNarration(page);
+    await page.waitForTimeout(1000);
 
     await showNarration(page, "BRAID Manager", "Budget & RAID Log Management Made Simple");
     await page.waitForTimeout(4000);
@@ -608,7 +692,7 @@ test.describe("braidMgr Demo Walkthrough", () => {
     await showNarration(
       page,
       "Key Features",
-      "Visual indicators • Multiple views • Powerful filtering • Real-time updates"
+      "Visual indicators • AI assistant • Multiple views • Powerful filtering"
     );
     await page.waitForTimeout(5000);
 
