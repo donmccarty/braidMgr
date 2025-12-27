@@ -61,17 +61,30 @@ Deploy documentation site to Cloudflare Pages.
 
 ### INFRA-003: GitHub Actions CI/CD
 
-**Status**: Pending
+**Status**: Complete
 **Priority**: P2
+**Completed**: 2025-12-26
 
 Set up continuous integration and deployment.
 
-**Tasks**:
-- [ ] Backend tests on PR
-- [ ] Frontend tests on PR
-- [ ] Linting and type checking
-- [ ] Build verification
-- [ ] Deploy docs on merge to main
+**Workflows Created**:
+- `.github/workflows/ci.yml` - Tests, linting, type checking on PRs
+- `.github/workflows/deploy-docs.yml` - Auto-deploy docs to Cloudflare Pages
+
+**Completed**:
+- [x] Backend tests on PR (pytest)
+- [x] Frontend tests on PR (vitest)
+- [x] Linting (ruff, eslint)
+- [x] Type checking (mypy, tsc)
+- [x] Build verification
+- [x] Deploy docs on merge to main
+- [x] E2E tests on main branch
+
+**Required Secrets** (set in GitHub repo settings):
+- `CLOUDFLARE_API_TOKEN` - API token with Pages permissions
+- `CLOUDFLARE_ACCOUNT_ID` - 88e50c4ee658ed559d5153f0b2f7e77b
+
+**Pending** (optional):
 - [ ] Deploy app on release tag
 
 ---
@@ -225,7 +238,7 @@ None currently.
 
 | ID | Description | Status |
 |----|-------------|--------|
-| INFRA-003 | GitHub Actions CI/CD | Pending |
+| - | None | - |
 
 ---
 
@@ -241,3 +254,4 @@ None currently.
 |----|-------------|-----------|
 | INFRA-001 | MkDocs documentation site | 2025-12-26 |
 | INFRA-002 | Cloudflare Pages hosting | 2025-12-26 |
+| INFRA-003 | GitHub Actions CI/CD | 2025-12-26 |

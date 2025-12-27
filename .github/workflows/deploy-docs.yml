@@ -1,0 +1,42 @@
+# =============================================================================
+# Deploy Documentation
+# Builds and deploys docs to Cloudflare Pages on push to main
+# =============================================================================
+
+name: Deploy Docs
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "docs/**"
+      - "mkdocs.yml"
+      - ".github/workflows/deploy-docs.yml"
+  workflow_dispatch:  # Allow manual trigger
+
+jobs:
+  deploy:
+    name: Build and Deploy
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install MkDocs
+        run: pip install mkdocs-material
+
+      - name: Build documentation
+        run: mkdocs build
+
+      - name: Deploy to Cloudflare Pages
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: pages deploy site --project-name=braidmgr-docs --branch=main --commit-dirty=true
