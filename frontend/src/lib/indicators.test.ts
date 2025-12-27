@@ -135,7 +135,7 @@ describe("getIndicatorSeverity", () => {
     ]
 
     for (let i = 1; i < severities.length; i++) {
-      expect(severities[i]).toBeLessThan(severities[i - 1])
+      expect(severities[i]!).toBeLessThan(severities[i - 1]!)
     }
   })
 })
@@ -154,9 +154,9 @@ describe("sortByIndicatorSeverity", () => {
 
     const sorted = sortByIndicatorSeverity(items)
 
-    expect(sorted[0].indicator).toBe("Beyond Deadline!!!")
-    expect(sorted[1].indicator).toBe("In Progress")
-    expect(sorted[2].indicator).toBe("Completed")
+    expect(sorted[0]!.indicator).toBe("Beyond Deadline!!!")
+    expect(sorted[1]!.indicator).toBe("In Progress")
+    expect(sorted[2]!.indicator).toBe("Completed")
   })
 
   it("handles null indicators", () => {
@@ -167,8 +167,8 @@ describe("sortByIndicatorSeverity", () => {
 
     const sorted = sortByIndicatorSeverity(items)
 
-    expect(sorted[0].indicator).toBe("In Progress")
-    expect(sorted[1].indicator).toBe(null)
+    expect(sorted[0]!.indicator).toBe("In Progress")
+    expect(sorted[1]!.indicator).toBe(null)
   })
 
   it("does not mutate original array", () => {
@@ -233,8 +233,8 @@ describe("groupByIndicator", () => {
     const groups = groupByIndicator(items)
     const inProgress = groups.get("In Progress")!
 
-    expect(inProgress[0].id).toBe(1)
-    expect(inProgress[1].id).toBe(2)
-    expect(inProgress[2].id).toBe(3)
+    expect(inProgress[0]!.id).toBe(1)
+    expect(inProgress[1]!.id).toBe(2)
+    expect(inProgress[2]!.id).toBe(3)
   })
 })
